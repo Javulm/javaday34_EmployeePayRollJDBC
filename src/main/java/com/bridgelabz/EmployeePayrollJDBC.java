@@ -5,18 +5,14 @@ import java.sql.*;
 public class EmployeePayrollJDBC {
     public static void main(String[] args) {
         String query = "select * from employee_payroll";
-        String query1 = "update employee_payroll set basicPay=4500000.00 where id ='2' or name='Teresa'";
+        String query2 = "select avg(basicPay) as avg, sum(basicPay) as sum, min(basicPay) as min, max(basicPay) as max from employee_payroll where gender = 'F' group by gender";
         Connection con = EmployeePayrollConnection.createConnection();
         try {
-            PreparedStatement stm1 = con.prepareStatement(query1);
-            int resultSet1 = stm1.executeUpdate(query1);
-            Statement stm = con.createStatement();
-            ResultSet resultSet = stm.executeQuery(query);
-            if(resultSet1!=0){
-                System.out.println("data updated");
-            }else {
-                throw new EmployeePayrollException(EmployeePayrollException.Exception.DATA_NULL, "Data update failed");
-            }
+            Statement stm1 = con.createStatement();
+            ResultSet resultSet = stm1.executeQuery(query);
+            Statement stm2 = con.createStatement();
+            ResultSet resultSet1 = stm2.executeQuery(query2);
+
             while (resultSet.next()){
                 System.out.println("ID: " + resultSet.getInt("id"));
                 System.out.println("Name: " + resultSet.getString("name"));
@@ -33,7 +29,14 @@ public class EmployeePayrollJDBC {
                 System.out.println("NetPay: " + resultSet.getDouble("NetPay"));
                 System.out.println("*********************************");
             }
-        } catch (SQLException | EmployeePayrollException e) {
+            while (resultSet1.next()) {
+                double average = resultSet1.getDouble("avg");
+                double sum = resultSet1.getDouble("sum");
+                double min = resultSet1.getDouble("min");
+                double max = resultSet1.getDouble("max");
+                System.out.println("Average of basic_pay : " + average + "\nsum of basic_pay : " + sum + "\nMinimum of basic_pay : " + min + "\nMaximum of basic_pay : " + max);
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
