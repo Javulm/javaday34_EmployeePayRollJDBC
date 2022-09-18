@@ -8,10 +8,18 @@ import java.sql.Statement;
 public class EmployeePayrollJDBC {
     public static void main(String[] args) {
         String query = "select * from employee_payroll";
+        String query1 = "update employee_payroll set basicPay=4200000.00 where id ='4' and name='Teresa'";
         Connection con = EmployeePayrollConnection.createConnection();
         try {
             Statement stm = con.createStatement();
             ResultSet resultSet = stm.executeQuery(query);
+            Statement stm1 = con.createStatement();
+            int resultSet1 = stm1.executeUpdate(query1);
+            if(resultSet1!=0){
+                System.out.println("data updated");
+            }else {
+                System.out.println("data update failed");
+            }
             while (resultSet.next()){
                 System.out.println("ID: " + resultSet.getInt("id"));
                 System.out.println("Name: " + resultSet.getString("name"));
